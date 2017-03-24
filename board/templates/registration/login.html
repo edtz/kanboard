@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    {% load widget_tweaks %}
+    <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit">
+        Login
+    </button>
+    <input type="hidden" name="next" value="/" />
+    </form>
+{% endblock %}

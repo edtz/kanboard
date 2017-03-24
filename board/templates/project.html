@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<style type="text/css">
+    .header-text{
+        margin:0;
+        padding:0 10px;
+    }
+    h3{
+        text-align:left;
+        position:relative;
+    }
+    .header-line{
+        position: absolute;
+        top: 50%;
+        width: 93%;
+        border-top:solid 2px grey;
+        opacity: 0.8;
+    }
+    .to-do-card.mdl-card{
+        background: red;
+    }
+    .doing-card.mdl-card{
+        background: #3E4EB8;
+    }
+    .done-card.mdl-card{
+        background: green;
+    }
+    .mdl-card__title, .mdl-card__actions, .mdl-card__actions > .mdl-button {
+      color: #fff;
+    }
+    .mdl-card__actions {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+</style>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">{{ project.name }}</span>
+    </div>
+    <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+      <a href="#overview" class="mdl-layout__tab is-active">Overview</a>
+      {% for i, sprint, stories in sprints %}
+      <a href="#scroll-sprint-{{ i }}" class="mdl-layout__tab">Sprint {{ i }}</a>
+      {% endfor %}
+      <a href="create-sprint/" class="mdl-layout__tab">+sprint</a>
+      <a href="create-story/" class="mdl-layout__tab">+story</a>
+    </div>
+  </header>
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">{{ sidebar.username }}   <a href="/logout">logout</a> </span>
+    <nav class="mdl-navigation">
+    {% for user_project in sidebar.projects %}
+      <a class="mdl-navigation__link" href="">{{ user_project.name }}</a>
+    {% endfor %}
+      <a class="mdl-navigation__link is-active" href="">+project</a>
+    </nav>
+  </div>
+  <main class="mdl-layout__content">
+    <section class="mdl-layout__tab-panel is-active" id="overview">
+      <div class="page-content">Hello world</div>
+    </section>
+    {% for i, sprint, stories in sprints %}
+    {% regroup stories|dictsort:"status_id.id" by status_id.description as stories_grouped %}
+    <section class="mdl-layout__tab-panel" id="scroll-sprint-{{ i }}">
+      <div class="page-content">
+        {% for group in stories_grouped %}
+            <h3><span class="header-text">{{ group.grouper }}</span><span class="header-line" /></h2>
+            <div class="mdl-grid">
+            {% for story in group.list %}
+              <div class="{{ group.grouper|slugify }}-card mdl-card mdl-shadow--2dp mdl-cell mdl-cell--2-col">
+                <div class="mdl-card__title mdl-card--expand">
+                    <h4>
+                      {{ story.description }}<br>
+                    </h4>
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                        Edit story
+                    </a>
+                </div>
+              </div>
+            {% endfor %}
+            </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+  </main>
+</div>
+{% endblock %}
